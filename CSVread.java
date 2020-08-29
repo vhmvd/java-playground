@@ -1,5 +1,7 @@
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.io.FileNotFoundException;
@@ -10,6 +12,7 @@ class CSVread
     private String end;
     private String previous;
     private Map<String,String> attract;
+    private List<String> intermediatNodes;
     private int dist;
     private int time;
     private int noOfPOI;
@@ -20,6 +23,7 @@ class CSVread
     Scanner myReader;
     CSVread()
     {
+        intermediatNodes = null;
         head = null;
         vertexPtr = null;
         roadsPtr = null;
@@ -32,7 +36,7 @@ class CSVread
         attract = null;
     }
 
-    public void reader()
+    private void reader()
     {
         try
         {
@@ -108,28 +112,56 @@ class CSVread
         }
     }
 
+    private void Algorithm()
+    {
+        
+    }
+
     public void setter()
     {
+        reader();
         Scanner input = new Scanner(System.in);
         System.out.print("\nEnter name of tour starting city: ");
         start = input.next();
         System.out.print("\nEnter name of tour ending city: ");
         end = input.next();
-        System.out.print("\nEnter number of POI you want to visit: ");
+        System.out.print("\nEnter number of the POI you want to visit: ");
         noOfPOI = input.nextInt();
         if(noOfPOI > 0)
         {
+            int i=1;
+            intermediatNodes = new ArrayList<>();
+            while(i<=noOfPOI)
+            {
+                System.out.print("\n"+i+". POI name: ");
+                previous = input.next();
+                if(attract.containsKey(previous))
+                {
+                    intermediatNodes.add(attract.get(previous));
+                    i++;
+                }
+                else
+                {
+                    System.out.println("\nPOI does not exist!!");
+                }
+            }
+            Algorithm();
         }
         else if(noOfPOI == 0)
         {
+            Algorithm();
         }
         else if(noOfPOI>142)
         {
             System.out.println("\nCannot exceed available number of attractions!!");
+            input.close();
+            return;
         }
         else
         {
             System.out.println("\nCannot be negative!!");
+            input.close();
+            return;
         }
         input.close();
     }
