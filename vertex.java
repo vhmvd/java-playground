@@ -1,10 +1,10 @@
 public class vertex
 {
-    private String locationName;
+    String locationName;
     vertex nextVertex;
     vertex nextLocation;
-    private int distance;
-    private int time;
+    int distance;
+    int time;
     vertex()
     {
         locationName = null;
