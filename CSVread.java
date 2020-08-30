@@ -17,16 +17,16 @@ class CSVread
     private int time;
     private int noOfPOI;
     private vertex head;
+    private vertex ptr;
     private vertex vertexPtr;
-    private roads roadsPtr;
+    //private PriorityQueue<>
     File myObj;
     Scanner myReader;
     CSVread()
     {
         intermediatNodes = null;
         head = null;
-        vertexPtr = null;
-        roadsPtr = null;
+        ptr = null;
         dist = 0;
         time = 0;
         noOfPOI = 0;
@@ -54,30 +54,33 @@ class CSVread
                 if(head == null)
                 {
                     head = new vertex();
-                    head.setter(start);
-                    head.nextLocation = new roads();
-                    roadsPtr = head.nextLocation;
-                    roadsPtr.setter(end, dist, time);
-                    vertexPtr = head;
+                    head.LocationSetter(start);
+                    head.nextLocation = new vertex();
+                    ptr = head.nextLocation;
+                    ptr.DistanceTimeSetter(dist, time);
+                    ptr.LocationSetter(end);
                     previous = start;
+                    vertexPtr = head;
                 }
                 else
                 {
                     if(previous.equals(start))
                     {
-                        roadsPtr.next = new roads();
-                        roadsPtr = roadsPtr.next;
-                        roadsPtr.setter(end, dist, time);
+                        ptr.nextLocation = new vertex();
+                        ptr = ptr.nextLocation;
+                        ptr.DistanceTimeSetter(dist, time);
+                        ptr.LocationSetter(end);
                         previous = start;
                     }
                     else
                     {
-                        vertexPtr.next = new vertex();
-                        vertexPtr = vertexPtr.next;
-                        vertexPtr.setter(start);
-                        vertexPtr.nextLocation = new roads();
-                        roadsPtr = vertexPtr.nextLocation;
-                        roadsPtr.setter(end, dist, time);
+                        vertexPtr.nextVertex=new vertex();
+                        vertexPtr=vertexPtr.nextVertex;
+                        vertexPtr.LocationSetter(start);
+                        vertexPtr.nextLocation = new vertex();
+                        ptr = vertexPtr.nextLocation;
+                        ptr.DistanceTimeSetter(dist, time);
+                        ptr.LocationSetter(end);
                         previous = start;
                     }
                 }
