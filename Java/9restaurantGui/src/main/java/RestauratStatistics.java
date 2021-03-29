@@ -1,9 +1,19 @@
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Ahmn2
@@ -62,6 +72,8 @@ public class RestauratStatistics extends javax.swing.JFrame {
 
     jLabel5.setText("Lower Limit:");
 
+    inputTextField.setText("inputFile.txt");
+
     startTextField.setText("DD-MM-YY-hh-mm");
 
     endTextField.setText("DD-MM-YY-hh-mm");
@@ -93,21 +105,51 @@ public class RestauratStatistics extends javax.swing.JFrame {
 
     totalAmountButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
     totalAmountButton.setText("Total Amount");
+    totalAmountButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        totalAmountButtonActionPerformed(evt);
+      }
+    });
 
     totalVisitButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
     totalVisitButton.setText("Total Visits");
+    totalVisitButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        totalVisitButtonActionPerformed(evt);
+      }
+    });
 
     totalCustomersButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
     totalCustomersButton.setText("Total Customers");
+    totalCustomersButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        totalCustomersButtonActionPerformed(evt);
+      }
+    });
 
     listVisitsButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
     listVisitsButton.setText("List Visits");
+    listVisitsButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        listVisitsButtonActionPerformed(evt);
+      }
+    });
 
     avgCustomersButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
     avgCustomersButton.setText("Average Customers");
+    avgCustomersButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        avgCustomersButtonActionPerformed(evt);
+      }
+    });
 
     avgAmoungButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
     avgAmoungButton.setText("Average Amount");
+    avgAmoungButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        avgAmoungButtonActionPerformed(evt);
+      }
+    });
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -207,9 +249,363 @@ public class RestauratStatistics extends javax.swing.JFrame {
     // TODO add your handling code here:
   }//GEN-LAST:event_startTimeCheckBoxActionPerformed
 
+  private void addObjectsInCustomerVisitArray(String[] time, int persons, double amount) {
+    CustomerVisitArray[count] = new CustomerVisit(new Time(Integer.parseInt(time[0]), Integer.parseInt(time[1]),
+      Integer.parseInt(time[2]), Integer.parseInt(time[3]),
+      Integer.parseInt(time[4].strip())),
+      new Bill(persons, amount));
+    count++;
+  }
+
   private void readButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readButtonActionPerformed
-    
+    String fileName = inputTextField.getText();
+
+    try {
+      Scanner sc = new Scanner(new FileReader(fileName));
+      while (sc.hasNextLine()) {
+        String[] time = sc.next().split("-");
+        int persons = sc.nextInt();
+        double amount = sc.nextDouble();
+        addObjectsInCustomerVisitArray(time, persons, amount);
+      }
+      JOptionPane.showMessageDialog(this, "File read successfully");
+    } catch (FileNotFoundException e) {
+      JOptionPane.showMessageDialog(this, "File does not exist");
+    }
   }//GEN-LAST:event_readButtonActionPerformed
+
+  private void loadAppropriateObjects() throws IllegalAccessException {
+    if (!upperLimitCheckBox.isSelected() || !lowerLimitCheckBox.isSelected()) {
+      if (upperTextField.getText().isBlank() && lowerTextField.getText().isBlank()) {
+        throw new IllegalAccessError();
+      }
+    }
+    String[] startTime = startTextField.getText().split("-");
+    String[] endTime = endTextField.getText().split("-");
+    Time startT = null, endT = null;
+    if (!startTimeCheckBox.isSelected()) {
+      if (startTime.length != 5) {
+        JOptionPane.showMessageDialog(this, "Format start time: DD-MM-YY-hh-mm");
+        return;
+      }
+      startT = new Time(Integer.parseInt(startTime[0].strip()), Integer.parseInt(startTime[1]),
+        Integer.parseInt(startTime[2]), Integer.parseInt(startTime[3]),
+        Integer.parseInt(startTime[4].strip()));
+    }
+    if (!endTimeCheckBox.isSelected()) {
+      if (endTime.length != 5) {
+        JOptionPane.showMessageDialog(this, "Format end time: DD-MM-YY-hh-mm");
+        return;
+      }
+      endT = new Time(Integer.parseInt(endTime[0].strip()), Integer.parseInt(endTime[1]),
+        Integer.parseInt(endTime[2]), Integer.parseInt(endTime[3]),
+        Integer.parseInt(endTime[4].strip()));
+    }
+
+    if (!startTimeCheckBox.isSelected() && !endTimeCheckBox.isSelected()) {
+      if (!upperLimitCheckBox.isSelected() && !lowerLimitCheckBox.isSelected()) {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(startT) == -1
+            && CustomerVisitArray[i].getTimeDetails().compareTime(endT) == 1) {
+            if (CustomerVisitArray[i].getBillDetails().getAmount() > Double.parseDouble(lowerTextField.getText())
+              && CustomerVisitArray[i].getBillDetails().getAmount() < Double.parseDouble(upperTextField.getText())) {
+              customerList.add(CustomerVisitArray[i]);
+            }
+          }
+        }
+      } else if (!lowerLimitCheckBox.isSelected()) {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(startT) == -1
+            && CustomerVisitArray[i].getTimeDetails().compareTime(endT) == 1) {
+            if (CustomerVisitArray[i].getBillDetails().getAmount() > Double.parseDouble(lowerTextField.getText())) {
+              customerList.add(CustomerVisitArray[i]);
+            }
+          }
+        }
+      } else if (!upperLimitCheckBox.isSelected()) {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(startT) == -1
+            && CustomerVisitArray[i].getTimeDetails().compareTime(endT) == 1) {
+            if (CustomerVisitArray[i].getBillDetails().getAmount() < Double.parseDouble(upperTextField.getText())) {
+              customerList.add(CustomerVisitArray[i]);
+            }
+          }
+        }
+      } else {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(startT) == -1
+            && CustomerVisitArray[i].getTimeDetails().compareTime(endT) == 1) {
+            customerList.add(CustomerVisitArray[i]);
+          }
+        }
+      }
+    } else if (!startTimeCheckBox.isSelected()) {
+      if (!upperLimitCheckBox.isSelected() && !lowerLimitCheckBox.isSelected()) {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(startT) == -1) {
+            if (CustomerVisitArray[i].getBillDetails().getAmount() > Double.parseDouble(lowerTextField.getText())
+              && CustomerVisitArray[i].getBillDetails().getAmount() < Double.parseDouble(upperTextField.getText())) {
+              customerList.add(CustomerVisitArray[i]);
+            }
+          }
+        }
+      } else if (!lowerLimitCheckBox.isSelected()) {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(startT) == -1) {
+            if (CustomerVisitArray[i].getBillDetails().getAmount() > Double.parseDouble(lowerTextField.getText())) {
+              customerList.add(CustomerVisitArray[i]);
+            }
+          }
+        }
+      } else if (!upperLimitCheckBox.isSelected()) {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(startT) == -1) {
+            if (CustomerVisitArray[i].getBillDetails().getAmount() < Double.parseDouble(upperTextField.getText())) {
+              customerList.add(CustomerVisitArray[i]);
+            }
+          }
+        }
+      } else {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(startT) == -1) {
+            customerList.add(CustomerVisitArray[i]);
+          }
+        }
+      }
+    } else if (!endTimeCheckBox.isSelected()) {
+      if (!upperLimitCheckBox.isSelected() && !lowerLimitCheckBox.isSelected()) {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(endT) == 1) {
+            if (CustomerVisitArray[i].getBillDetails().getAmount() > Double.parseDouble(lowerTextField.getText())
+              && CustomerVisitArray[i].getBillDetails().getAmount() < Double.parseDouble(upperTextField.getText())) {
+              customerList.add(CustomerVisitArray[i]);
+            }
+          }
+        }
+      } else if (!lowerLimitCheckBox.isSelected()) {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(endT) == 1) {
+            if (CustomerVisitArray[i].getBillDetails().getAmount() > Double.parseDouble(lowerTextField.getText())) {
+              customerList.add(CustomerVisitArray[i]);
+            }
+          }
+        }
+      } else if (!upperLimitCheckBox.isSelected()) {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(endT) == 1) {
+            if (CustomerVisitArray[i].getBillDetails().getAmount() < Double.parseDouble(upperTextField.getText())) {
+              customerList.add(CustomerVisitArray[i]);
+            }
+          }
+        }
+      } else {
+        for (int i = 0; i < count; i++) {
+          if (CustomerVisitArray[i].getTimeDetails().compareTime(endT) == 1) {
+            customerList.add(CustomerVisitArray[i]);
+          }
+        }
+      }
+    } else {
+      for (int i = 0; i < count; i++) {
+        customerList.add(CustomerVisitArray[i]);
+      }
+    }
+  }
+
+  private void statisticsFileWrite(String data) {
+    try {
+      FileWriter fw = new FileWriter("statistics.txt", true);
+      fw.write(data + "\n**************************************************\n\n");
+      fw.close();
+      JOptionPane.showMessageDialog(this, "Data succefully written");
+    } catch (IOException ex) {
+      JOptionPane.showMessageDialog(this, "Unexpected error while writing data");
+    }
+  }
+
+  private void totalVisitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalVisitButtonActionPerformed
+    if (count == 0) {
+      JOptionPane.showMessageDialog(this, "No customers data available");
+      return;
+    }
+    try {
+      this.loadAppropriateObjects();
+      int customerVisit = CustomerVisit.getNumOfVisits();
+      String data = "";
+      if (!startTimeCheckBox.isSelected()) {
+        data += "Start time: " + startTextField.getText() + "\n";
+      }
+      if (!endTimeCheckBox.isSelected()) {
+        data += "End time: " + endTextField.getText() + "\n";
+      }
+      if (!upperLimitCheckBox.isSelected()) {
+        data += "Upper limit: " + upperTextField.getText() + "\n";
+      }
+      if (!lowerLimitCheckBox.isSelected()) {
+        data += "Lower limit: " + lowerTextField.getText() + "\n";
+      }
+      statisticsFileWrite(data + "Total visits: " + customerVisit);
+      customerList.clear();
+    } catch (IllegalAccessError e) {
+      JOptionPane.showMessageDialog(this, "Upper limit and lower limit text field cannot be left empty or unignored");
+    } catch (Exception e) {
+      JOptionPane.showMessageDialog(this, "Upper limit, lower limit and date should be numbers only if not ignored");
+    }
+  }//GEN-LAST:event_totalVisitButtonActionPerformed
+
+  private void totalAmountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalAmountButtonActionPerformed
+    if (count == 0) {
+      JOptionPane.showMessageDialog(this, "No customers data available");
+      return;
+    }
+    try {
+      this.loadAppropriateObjects();
+      int amount = 0;
+      for (int i = 0; i < customerList.size(); i++) {
+        amount += customerList.get(i).getBillDetails().getAmount();
+      }
+      String data = "";
+      if (!startTimeCheckBox.isSelected()) {
+        data += "Start time: " + startTextField.getText() + "\n";
+      }
+      if (!endTimeCheckBox.isSelected()) {
+        data += "End time: " + endTextField.getText() + "\n";
+      }
+      if (!upperLimitCheckBox.isSelected()) {
+        data += "Upper limit: " + upperTextField.getText() + "\n";
+      }
+      if (!lowerLimitCheckBox.isSelected()) {
+        data += "Lower limit: " + lowerTextField.getText() + "\n";
+      }
+      statisticsFileWrite(data + "Total amount: " + amount);
+      customerList.clear();
+    } catch (IllegalAccessError e) {
+      JOptionPane.showMessageDialog(this, "Upper limit and lower limit text field cannot be left empty or unignored");
+    } catch (Exception e) {
+      JOptionPane.showMessageDialog(this, "Upper limit, lower limit and date should be numbers only if not ignored");
+    }
+  }//GEN-LAST:event_totalAmountButtonActionPerformed
+
+  private void totalCustomersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalCustomersButtonActionPerformed
+    if (count == 0) {
+      JOptionPane.showMessageDialog(this, "No customers data available");
+      return;
+    }
+    try {
+      this.loadAppropriateObjects();
+      int totalCustomers = Bill.getTotalNumOfPersons();
+      String data = "";
+      if (!startTimeCheckBox.isSelected()) {
+        data += "Start time: " + startTextField.getText() + "\n";
+      }
+      if (!endTimeCheckBox.isSelected()) {
+        data += "End time: " + endTextField.getText() + "\n";
+      }
+      if (!upperLimitCheckBox.isSelected()) {
+        data += "Upper limit: " + upperTextField.getText() + "\n";
+      }
+      if (!lowerLimitCheckBox.isSelected()) {
+        data += "Lower limit: " + lowerTextField.getText() + "\n";
+      }
+      statisticsFileWrite(data + "Total customers: " + totalCustomers);
+      customerList.clear();
+    } catch (IllegalAccessError e) {
+      JOptionPane.showMessageDialog(this, "Upper limit and lower limit text field cannot be left empty or unignored");
+    } catch (Exception e) {
+      JOptionPane.showMessageDialog(this, "Upper limit, lower limit and date should be numbers only if not ignored");
+    }
+  }//GEN-LAST:event_totalCustomersButtonActionPerformed
+
+  private void listVisitsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listVisitsButtonActionPerformed
+    if (count == 0) {
+      JOptionPane.showMessageDialog(this, "No customers data available");
+      return;
+    }
+    try {
+      this.loadAppropriateObjects();
+      String data = "";
+      if (!startTimeCheckBox.isSelected()) {
+        data += "Start time: " + startTextField.getText() + "\n";
+      }
+      if (!endTimeCheckBox.isSelected()) {
+        data += "End time: " + endTextField.getText() + "\n";
+      }
+      if (!upperLimitCheckBox.isSelected()) {
+        data += "Upper limit: " + upperTextField.getText() + "\n";
+      }
+      if (!lowerLimitCheckBox.isSelected()) {
+        data += "Lower limit: " + lowerTextField.getText() + "\n";
+      }
+      for (int i = 0; i < customerList.size(); i++) {
+        data += customerList.get(i).toString() + "\n";
+      }
+      statisticsFileWrite(data);
+      customerList.clear();
+    } catch (IllegalAccessError e) {
+      JOptionPane.showMessageDialog(this, "Upper limit and lower limit text field cannot be left empty or unignored");
+    } catch (Exception e) {
+      JOptionPane.showMessageDialog(this, "Upper limit, lower limit and date should be numbers only if not ignored");
+    }
+
+  }//GEN-LAST:event_listVisitsButtonActionPerformed
+
+  private void avgCustomersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_avgCustomersButtonActionPerformed
+    if (count == 0) {
+      JOptionPane.showMessageDialog(this, "No customers data available");
+      return;
+    }
+    try {
+      this.loadAppropriateObjects();
+      String data = "";
+      if (!startTimeCheckBox.isSelected()) {
+        data += "Start time: " + startTextField.getText() + "\n";
+      }
+      if (!endTimeCheckBox.isSelected()) {
+        data += "End time: " + endTextField.getText() + "\n";
+      }
+      if (!upperLimitCheckBox.isSelected()) {
+        data += "Upper limit: " + upperTextField.getText() + "\n";
+      }
+      if (!lowerLimitCheckBox.isSelected()) {
+        data += "Lower limit: " + lowerTextField.getText() + "\n";
+      }
+      statisticsFileWrite(data + "Avg. Customer: " + CustomerVisit.getAverageBillPersons());
+      customerList.clear();
+    } catch (IllegalAccessError e) {
+      JOptionPane.showMessageDialog(this, "Upper limit and lower limit text field cannot be left empty or unignored");
+    } catch (Exception e) {
+      JOptionPane.showMessageDialog(this, "Upper limit, lower limit and date should be numbers only if not ignored");
+    }
+  }//GEN-LAST:event_avgCustomersButtonActionPerformed
+
+  private void avgAmoungButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_avgAmoungButtonActionPerformed
+    if (count == 0) {
+      JOptionPane.showMessageDialog(this, "No customers data available");
+      return;
+    }
+    try {
+      this.loadAppropriateObjects();
+      String data = "";
+      if (!startTimeCheckBox.isSelected()) {
+        data += "Start time: " + startTextField.getText() + "\n";
+      }
+      if (!endTimeCheckBox.isSelected()) {
+        data += "End time: " + endTextField.getText() + "\n";
+      }
+      if (!upperLimitCheckBox.isSelected()) {
+        data += "Upper limit: " + upperTextField.getText() + "\n";
+      }
+      if (!lowerLimitCheckBox.isSelected()) {
+        data += "Lower limit: " + lowerTextField.getText() + "\n";
+      }
+      statisticsFileWrite(data + "Avg. Amount: " + CustomerVisit.getAverageBillsAmount());
+      customerList.clear();
+    } catch (IllegalAccessError e) {
+      JOptionPane.showMessageDialog(this, "Upper limit and lower limit text field cannot be left empty or unignored");
+    } catch (Exception e) {
+      JOptionPane.showMessageDialog(this, "Upper limit, lower limit and date should be numbers only if not ignored");
+    }
+  }//GEN-LAST:event_avgAmoungButtonActionPerformed
 
   /**
    * @param args the command line arguments
@@ -245,8 +641,10 @@ public class RestauratStatistics extends javax.swing.JFrame {
       }
     });
   }
-  
+
   private CustomerVisit[] CustomerVisitArray = new CustomerVisit[10000];
+  private int count = 0;
+  private ArrayList<CustomerVisit> customerList = new ArrayList<CustomerVisit>();
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton avgAmoungButton;
   private javax.swing.JButton avgCustomersButton;

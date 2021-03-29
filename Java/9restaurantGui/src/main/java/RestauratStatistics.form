@@ -164,6 +164,9 @@
     <Component class="javax.swing.JTextField" name="lowerTextField">
     </Component>
     <Component class="javax.swing.JTextField" name="inputTextField">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="inputFile.txt"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="startTextField">
       <Properties>
@@ -229,6 +232,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Total Amount"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="totalAmountButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="totalVisitButton">
       <Properties>
@@ -237,6 +243,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Total Visits"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="totalVisitButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="totalCustomersButton">
       <Properties>
@@ -245,6 +254,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Total Customers"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="totalCustomersButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="listVisitsButton">
       <Properties>
@@ -253,6 +265,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="List Visits"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="listVisitsButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="avgCustomersButton">
       <Properties>
@@ -261,6 +276,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Average Customers"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="avgCustomersButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="avgAmoungButton">
       <Properties>
@@ -269,6 +287,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Average Amount"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="avgAmoungButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

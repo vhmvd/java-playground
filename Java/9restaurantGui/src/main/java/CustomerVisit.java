@@ -12,7 +12,7 @@ public class CustomerVisit {
   }
 
   public CustomerVisit(Time timeDetails, Bill billDetails) {
-    this.timeDetails = new Time(timeDetails.getHour(), timeDetails.getMinute(), timeDetails.getDay(), timeDetails.getMonth(), timeDetails.getYear());
+    this.timeDetails = new Time(timeDetails.getDay(), timeDetails.getMonth(), timeDetails.getYear(), timeDetails.getHour(), timeDetails.getMinute());
     this.billDetails = new Bill(billDetails.getnumOfPersons(), billDetails.getAmount());
     NumOfVisits++;
   }
@@ -38,6 +38,6 @@ public class CustomerVisit {
   }
 
   public String toString() {
-    return timeDetails + "," + billDetails;
+    return timeDetails + ",\n" + billDetails + "\n";
   }
 }
