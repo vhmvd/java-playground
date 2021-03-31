@@ -1,0 +1,8 @@
+Account: BANK-XV378263
+Beginning balance: 121290.8
+Ending balance: 114006.76000000001
+Interest paid: 6000.040000000001
+Amount deposited: 6.0
+Deposits made: 1
+Amount withdrawn: 1290.0
+Withdraws made: 1
