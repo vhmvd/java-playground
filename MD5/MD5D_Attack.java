@@ -59,7 +59,7 @@ public class MD5D_Attack {
 
         while (true) {
             String Match = MD5(guessString);
-            System.out.println(guessString);
+            System.out.println(Match);
             if (Match.equals(pass)) {
                 System.out.println("Password found: \n" + guessString);
                 found = true;
