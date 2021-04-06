@@ -21,8 +21,7 @@ public class MD5D_Attack {
         return hash;
     }
 
-    public static void bruteForce(String hash)
-    {
+    public static void bruteForce(String hash) {
 
     }
 
@@ -34,28 +33,20 @@ public class MD5D_Attack {
         try {
             String path = "";
             String choice;
-            while(true)
-            {
+            while (true) {
                 System.out.print("\n1. Dictionary attack\n2. Common passwords attack\n3. Brute force attack\nInput: ");
                 choice = S.nextLine();
-                if(choice == "1")
-                {
+                if (choice == "1") {
                     path += "dictionary.txt";
                     break;
-                }
-                else if(choice == "2")
-                {
+                } else if (choice == "2") {
                     path += "commonpasswords.txt";
                     break;
-                }
-                else if(choice == "3")
-                {
+                } else if (choice == "3") {
                     bruteForce(pass);
                     S.close();
                     return;
-                }
-                else
-                {
+                } else {
                     System.out.println("Invalid choice!!\n");
                 }
             }
@@ -79,10 +70,8 @@ public class MD5D_Attack {
             if (x != 1) {
                 System.out.println("Password not Found:");
             }
-
         } catch (IOException e) {
             System.out.println("Wrong arguments");
-
         }
         S.close();
     }
