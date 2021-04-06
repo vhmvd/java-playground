@@ -13,6 +13,4 @@ public class Customer {
     this.amount = amount;
     this.numberOfItems = numberOfItems;
   }
-
-  public double getAmount(){return amount;};
 }
