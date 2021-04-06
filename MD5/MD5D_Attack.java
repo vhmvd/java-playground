@@ -84,10 +84,6 @@ public class MD5D_Attack {
             System.out.println("Wrong arguments");
 
         }
-
-        // Test hash and dictionary file location
-        // 74b87337454200d4d33f80c4663dc5e5
-        // C:\Users\Computer\Desktop\dictionary.txt
         S.close();
     }
 
