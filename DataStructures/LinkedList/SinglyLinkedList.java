@@ -1,5 +1,3 @@
-package linkedlists.singly;
-
 public class SinglyLinkedList {
     protected Node first;
     protected Node last;
@@ -30,6 +28,7 @@ public class SinglyLinkedList {
             System.out.print(current.info + " ");
             current = current.link;
         }
+        System.out.println();
     }
 
     public int first() {
@@ -65,7 +64,7 @@ public class SinglyLinkedList {
 
     public void insertLast(int newInfo) {
         Node newNode = new Node(newInfo);
-        if (isEmpty()){
+        if (isEmpty()) {
             first = last = newNode;
         } else {
             last.link = newNode;
@@ -99,5 +98,74 @@ public class SinglyLinkedList {
     public void copyList(SinglyLinkedList otherList) {
         if (this != otherList)
             copy(otherList);
+    }
+
+    // Q2
+    public void printThird() {
+        if (count > 3) {
+            System.out.println(first.link.link.info);
+        } else {
+            System.err.println("No 3rd element in the linked list");
+        }
+    }
+
+    // Q3
+    public void reverseList() {
+        Node prev = null;
+        Node current = first;
+        Node next = null;
+        while (current != null) {
+            next = current.link;
+            current.link = prev;
+            prev = current;
+            current = next;
+        }
+        last = first;
+        first = prev;
+    }
+
+    // Q4
+    public void swap(int n1, int n2) {
+        Node temp1 = first;
+        Node temp2 = first;
+        Node prev1 = null;
+        Node prev2 = null;
+
+        if (first == null) {
+            return;
+        }
+
+        if (n1 == n2) {
+            return;
+        }
+
+        while (temp1.info != n1 && temp1 != null) {
+            prev1 = temp1;
+            temp1 = temp1.link;
+        }
+
+        while (temp2.info != n2 && temp2 != null) {
+            prev2 = temp2;
+            temp2 = temp2.link;
+        }
+
+        if (temp1 == null || temp2 == null) {
+            System.err.println("Swapping cannot be performed");
+            return;
+        }
+
+        if (prev1 != null)
+            prev1.link = temp2;
+        else
+            first = temp2;
+
+        if (prev2 != null)
+            prev2.link = temp1;
+        else
+            first = temp1;
+
+            Node temp = temp1.link;   
+            temp1.link = temp2.link;   
+            temp2.link = temp; 
     }
 }
